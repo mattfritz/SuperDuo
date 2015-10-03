@@ -71,7 +71,6 @@ public class BookService extends IntentService {
      * parameters.
      */
     private void fetchBook(String ean) {
-
         if(ean.length()!=13){
             return;
         }
