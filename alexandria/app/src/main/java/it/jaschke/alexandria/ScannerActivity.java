@@ -3,8 +3,8 @@ package it.jaschke.alexandria;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -52,11 +52,15 @@ public class ScannerActivity extends Activity implements ZXingScannerView.Result
         // Load book from ean using book service
         Intent bookIntent = new Intent(getApplicationContext(), BookService.class);
         bookIntent.putExtra(BookService.EAN, ean);
+        bookIntent.putExtra(BookService.SCANNER, true);
         bookIntent.setAction(BookService.FETCH_BOOK);
         getApplicationContext().startService(bookIntent);
 
         // Notify user that book is being fetched
-        Toast.makeText(getApplicationContext(), R.string.scan_successful, Toast.LENGTH_SHORT).show();
+        Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
+        messageIntent.putExtra(MainActivity.MESSAGE_KEY, getResources().getString(R.string.scan_successful));
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
+
         finish();
     }
 }

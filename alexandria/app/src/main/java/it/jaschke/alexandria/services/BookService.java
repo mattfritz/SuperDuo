@@ -35,7 +35,7 @@ public class BookService extends IntentService {
 
     public static final String FETCH_BOOK = "it.jaschke.alexandria.services.action.FETCH_BOOK";
     public static final String DELETE_BOOK = "it.jaschke.alexandria.services.action.DELETE_BOOK";
-
+    public static final String SCANNER = "it.jaschke.alexandria.services.extra.SCANNER";
     public static final String EAN = "it.jaschke.alexandria.services.extra.EAN";
 
     public BookService() {
@@ -46,9 +46,10 @@ public class BookService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             final String action = intent.getAction();
+            final boolean scanner = intent.getBooleanExtra(SCANNER, false);
             if (FETCH_BOOK.equals(action)) {
                 final String ean = intent.getStringExtra(EAN);
-                fetchBook(ean);
+                fetchBook(ean, scanner);
             } else if (DELETE_BOOK.equals(action)) {
                 final String ean = intent.getStringExtra(EAN);
                 deleteBook(ean);
@@ -70,7 +71,7 @@ public class BookService extends IntentService {
      * Handle action fetchBook in the provided background thread with the provided
      * parameters.
      */
-    private void fetchBook(String ean) {
+    private void fetchBook(String ean, boolean scanner) {
         if(ean.length()!=13){
             return;
         }
@@ -195,10 +196,12 @@ public class BookService extends IntentService {
                 writeBackCategories(ean,bookInfo.getJSONArray(CATEGORIES) );
             }
 
-            // Notify user that their book was added
-            Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
-            messageIntent.putExtra(MainActivity.MESSAGE_KEY,getResources().getString(R.string.book_added));
-            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
+            // Notify user that their book was added after scan
+            if (scanner) {
+                Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
+                messageIntent.putExtra(MainActivity.MESSAGE_KEY, getResources().getString(R.string.book_added));
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
+            }
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Error ", e);
         }
