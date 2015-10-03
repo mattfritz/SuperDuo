@@ -38,5 +38,8 @@
 
     <!-- Content description strings -->
     <string name="desc_share_button">Share</string>
-    <string name="desc_team_logo">Team logo</string>
+    <string name="desc_home_team_name">Home team is </string>
+    <string name="desc_away_team_name">Away team is </string>
+    <string name="desc_score">Score is </string>
+    <string name="desc_match_time">Match time is </string>
 </resources>
