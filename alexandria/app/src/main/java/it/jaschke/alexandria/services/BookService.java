@@ -195,6 +195,10 @@ public class BookService extends IntentService {
                 writeBackCategories(ean,bookInfo.getJSONArray(CATEGORIES) );
             }
 
+            // Notify user that their book was added
+            Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
+            messageIntent.putExtra(MainActivity.MESSAGE_KEY,getResources().getString(R.string.book_added));
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Error ", e);
         }
