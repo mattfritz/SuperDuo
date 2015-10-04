@@ -1,13 +1,12 @@
 package barqsoft.footballscores;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.content.Intent;
 import android.widget.RemoteViews;
 
-/**
- * Implementation of App Widget functionality.
- */
 public class FootballWidget extends AppWidgetProvider {
 
     @Override
@@ -33,12 +32,12 @@ public class FootballWidget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-        CharSequence widgetText = context.getString(R.string.appwidget_text);
-        // Construct the RemoteViews object
+        // Open MainActivity when widget is clicked
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.football_widget);
-        views.setTextViewText(R.id.appwidget_text, widgetText);
+        Intent launchIntent = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, launchIntent, 0);
+        views.setOnClickPendingIntent(R.id.widget, pendingIntent);
 
-        // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 }
