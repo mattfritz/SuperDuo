@@ -5,6 +5,8 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import barqsoft.footballscores.DatabaseContract;
@@ -34,6 +36,8 @@ public class WidgetIntentService extends IntentService {
     private static final int COL_ID = 8;
     private static final int COL_MATCHTIME = 2;
 
+    private static final String LOG_TAG = WidgetIntentService.class.getSimpleName();
+
     public WidgetIntentService() {
         super("WidgetIntentService");
     }
@@ -45,10 +49,24 @@ public class WidgetIntentService extends IntentService {
                 FootballWidgetProvider.class));
 
         // TODO: Update query to use current date etc.
-        Cursor data = getContentResolver().query(null, FOOTBALL_COLUMNS, null, null, null);
+        Uri uri = DatabaseContract.scores_table.buildScoreWithDate();
+        Cursor cursor = getContentResolver().query(uri, FOOTBALL_COLUMNS, null, null, null);
 
-        // TODO: Handle bad data connections or empty queries
+        if (cursor == null) {
+            Log.v(LOG_TAG, "Cursor is null");
+            return;
+        }
+        if (!cursor.moveToFirst()) {
+            Log.v(LOG_TAG, "Cursor has no data");
+            cursor.close();
+            return;
+        }
 
+        while (cursor.moveToNext()) {
+            String id = String.valueOf(cursor.getInt(COL_ID));
+            String sample = cursor.getString(COL_HOME);
+            Log.v(LOG_TAG, "ID: " + id + " SAMPLE: " + sample);
+        }
         // TODO: Get collection data here, might need an adapter
 
         for (int appWidgetId : appWidgetIds) {

@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
+import barqsoft.footballscores.service.WidgetIntentService;
+
 public class FootballWidgetProvider extends AppWidgetProvider {
 
     @Override
@@ -31,6 +33,8 @@ public class FootballWidgetProvider extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
+
+        context.startService(new Intent(context, WidgetIntentService.class));
 
         // Open MainActivity when widget is clicked
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.football_widget);
