@@ -121,7 +121,7 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
             ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
             ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",","\n"));
         } catch (NullPointerException e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Log.v(LOG_TAG, "No authors for this book");
         }
 
         String imgUrl = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
