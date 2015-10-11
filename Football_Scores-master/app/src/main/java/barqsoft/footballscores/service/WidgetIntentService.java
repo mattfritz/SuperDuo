@@ -9,6 +9,9 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import barqsoft.footballscores.DatabaseContract;
 import barqsoft.footballscores.FootballWidgetProvider;
 import barqsoft.footballscores.R;
@@ -48,9 +51,15 @@ public class WidgetIntentService extends IntentService {
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this,
                 FootballWidgetProvider.class));
 
-        // TODO: Update query to use current date etc.
+        // Query for matches on today's date
         Uri uri = DatabaseContract.scores_table.buildScoreWithDate();
-        Cursor cursor = getContentResolver().query(uri, FOOTBALL_COLUMNS, null, null, null);
+
+        Date date = new Date(System.currentTimeMillis());
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        String[] queryDate = new String[1];
+        queryDate[0] = dateFormatter.format(date);
+
+        Cursor cursor = getContentResolver().query(uri, FOOTBALL_COLUMNS, null, queryDate, null);
 
         if (cursor == null) {
             Log.v(LOG_TAG, "Cursor is null");
