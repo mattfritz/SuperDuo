@@ -57,7 +57,8 @@ public class Utilies
     {
         if(home_goals < 0 || awaygoals < 0)
         {
-            return " - ";
+            // Default this in case game has not yet started
+            return "0 - 0";
         }
         else
         {

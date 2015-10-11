@@ -15,6 +15,7 @@ import java.util.Date;
 import barqsoft.footballscores.DatabaseContract;
 import barqsoft.footballscores.FootballWidgetProvider;
 import barqsoft.footballscores.R;
+import barqsoft.footballscores.Utilies;
 
 public class WidgetIntentService extends IntentService {
     private static final String[] FOOTBALL_COLUMNS = {
@@ -59,7 +60,7 @@ public class WidgetIntentService extends IntentService {
         String[] queryDate = new String[1];
         queryDate[0] = dateFormatter.format(date);
 
-        Cursor cursor = getContentResolver().query(uri, FOOTBALL_COLUMNS, null, queryDate, null);
+        Cursor cursor = getContentResolver().query(uri, FOOTBALL_COLUMNS, null, queryDate, "_ID ASC LIMIT 1");
 
         if (cursor == null) {
             Log.v(LOG_TAG, "Cursor is null");
@@ -71,18 +72,26 @@ public class WidgetIntentService extends IntentService {
             return;
         }
 
-        while (cursor.moveToNext()) {
-            String id = String.valueOf(cursor.getInt(COL_ID));
-            String sample = cursor.getString(COL_HOME);
-            Log.v(LOG_TAG, "ID: " + id + " SAMPLE: " + sample);
-        }
-        // TODO: Get collection data here, might need an adapter
+        String homeName = cursor.getString(COL_HOME);
+        String awayName = cursor.getString(COL_AWAY);
+        String matchTime = cursor.getString(COL_MATCHTIME);
+        int homeGoals = cursor.getInt(COL_HOME_GOALS);
+        int awayGoals = cursor.getInt(COL_AWAY_GOALS);
+        String scoreText = Utilies.getScores(homeGoals, awayGoals);
+        int homeLogo = Utilies.getTeamCrestByTeamName(cursor.getString(COL_HOME));
+        int awayLogo = Utilies.getTeamCrestByTeamName(cursor.getString(COL_AWAY));
+        cursor.close();
 
         for (int appWidgetId : appWidgetIds) {
             int layout = R.layout.football_widget;
             RemoteViews views = new RemoteViews(getPackageName(), layout);
 
-            // TODO: Update widget views and add listeners here for each widget instance
+            views.setTextViewText(R.id.widget_home_name, homeName);
+            views.setTextViewText(R.id.widget_away_name, awayName);
+            views.setTextViewText(R.id.widget_match_time, matchTime);
+            views.setTextViewText(R.id.widget_score, scoreText);
+            views.setImageViewResource(R.id.widget_home_crest, homeLogo);
+            views.setImageViewResource(R.id.widget_away_crest, awayLogo);
 
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }

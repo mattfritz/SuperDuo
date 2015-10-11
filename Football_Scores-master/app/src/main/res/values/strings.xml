@@ -46,4 +46,5 @@
     <!-- Widget strings -->
     <string name="appwidget_text">Football Scores</string>
     <string name="add_widget">Add widget</string>
+    <string name="default_text">No Data</string>
 </resources>
